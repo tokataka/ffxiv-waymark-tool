@@ -69,9 +69,9 @@ export async function importDatFile(
     for (let i = 0; i < 8; i++) {
       const buffer = new DataView(waymarkSection.bodyData.buffer, waymarkOffset, 12);
 
-      const curX = buffer.getUint32(0, true) / 1000;
-      const curY = buffer.getUint32(4, true) / 1000;
-      const curZ = buffer.getUint32(8, true) / 1000;
+      const curX = buffer.getInt32(0, true) / 1000;
+      const curY = buffer.getInt32(4, true) / 1000;
+      const curZ = buffer.getInt32(8, true) / 1000;
 
       currentWaymarks.push(new Waymark(curX, curY, curZ));
 
@@ -122,9 +122,9 @@ export function exportDatFile(
 
     for (let i = 0; i < 8; i++) {
       const buffer = new DataView(xorData.buffer, waymarkOffset, 12);
-      buffer.setUint32(0, waymarkPreset.waymarks[i].x * 1000, true);
-      buffer.setUint32(4, waymarkPreset.waymarks[i].y * 1000, true);
-      buffer.setUint32(8, waymarkPreset.waymarks[i].z * 1000, true);
+      buffer.setInt32(0, waymarkPreset.waymarks[i].x * 1000, true);
+      buffer.setInt32(4, waymarkPreset.waymarks[i].y * 1000, true);
+      buffer.setInt32(8, waymarkPreset.waymarks[i].z * 1000, true);
 
       waymarkOffset += 12;
     }
