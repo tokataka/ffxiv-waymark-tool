@@ -32,7 +32,7 @@ export class WaymarkPreset {
   waymarks: Waymark[];
 
   constructor(mapId?: number, waymarks?: Waymark[]) {
-    this.mapId = mapId || -1;
+    this.mapId = mapId || 0;
     this.waymarks = [];
     if (waymarks) {
       for (let i = 0; i < 8; i++) {

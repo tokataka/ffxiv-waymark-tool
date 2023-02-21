@@ -9,13 +9,12 @@
   import ExportModal from '$lib/component/ExportModal.svelte';
   import Navbar from '$lib/component/Navbar.svelte';
   import { WaymarkId, type WaymarkPreset } from '$lib/model/WaymarkPreset';
-  import { Input, Label, Checkbox, Radio, Select } from 'flowbite-svelte';
+  import { NumberInput, Label, Checkbox, Radio, Select, P } from 'flowbite-svelte';
 
   let importOpen = false;
   let exportOpen = false;
 
   const canvasSize = 512;
-  let appHeight: number;
 
   let currentPresetId = 0;
   let prevPresetId = 0;
@@ -40,7 +39,7 @@
 
   onMount(async () => {
     $mapData = {
-      [-1]: {
+      [0]: {
         mapName: '--',
         mapFile: 'default',
         subMaps: [
@@ -59,16 +58,21 @@
 </script>
 
 <ImportModal bind:open={importOpen} bind:waymarkPresets={$waymarkPresets} />
-<ExportModal bind:open={exportOpen} />
+<ExportModal bind:open={exportOpen} bind:waymarkPresets={$waymarkPresets} />
 
-<Navbar bind:importOpen bind:exportOpen />
+<div class="container">
+  <Navbar
+    bind:importOpen
+    bind:exportOpen
+  />
 
-<div class="container flex">
-  <div class="sidebar-container" style="--sidebar-height:{appHeight}">
-    <Sidebar bind:waymarkPresets={$waymarkPresets} bind:currentPresetId />
-  </div>
-  <div class="main-container grid grid-cols-2" bind:clientHeight={appHeight}>
-    <div class="canvas-container">
+  <Sidebar
+    bind:waymarkPresets={$waymarkPresets}
+    bind:currentPresetId
+  />
+
+  <div class="flex flex-wrap items-center !ml-72 mt-20 mr-4" style="--canvas-size:{canvasSize};" >
+    <div class="canvas-container ml-4">
       <Select
         class="mb-3"
         bind:value={currentPreset.mapId}
@@ -86,48 +90,40 @@
       />
 
       {#if currentPreset.mapId in $mapData}
-        <div class="sub-map-container">
-          <form>
-            <div class="flex items-center gap-3 m-3">
-              {#each $mapData[currentPreset.mapId].subMaps as option, i}
-                <Radio bind:group={currentSubMapId} value={i} custom>
-                  <div
-                    class="inline-flex justify-between items-center px-3 py-2 w-full text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
-                  >
-                    <div class="w-full text-lg font-semibold">{option.mapFileIndex}</div>
-                  </div>
-                </Radio>
-              {/each}
-            </div>
-          </form>
-        </div>
+        <form class="flex items-center gap-3 m-3">
+          {#each $mapData[currentPreset.mapId].subMaps as option, i}
+            <Radio bind:group={currentSubMapId} value={i} custom>
+              <div
+                class="inline-flex justify-between items-center px-3 py-2 w-full text-gray-500 bg-white rounded-lg border border-gray-200 cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700"
+              >
+                <div class="w-full text-lg font-semibold">{option.mapFileIndex}</div>
+              </div>
+            </Radio>
+          {/each}
+        </form>
       {/if}
     </div>
 
-    <div class="edit-container mt-20">
+    <div class="edit-container ml-8">
       {#each currentPreset.waymarks as waymark, i}
         <form class="edit-form">
-          <div class="preset-info flex items-center gap-3 mb-2">
-            <div class="flex-initial">
-              <Checkbox id={`edit-active-${i}`} bind:checked={waymark.active} />
-            </div>
-            <div class="flex-initial w-16">
-              <Label for={`edit-active-${i}`}>
-                <img src={`${MARKER_BASE_URL}/${WaymarkId[i]}.png`} width="48" height="48" alt="" />
-              </Label>
-            </div>
-            <div class="flex-initial flex items-center gap-2 w-24">
-              <Label for={`edit-x-${i}`} class="mb-2">X</Label>
-              <Input id={`edit-x-${i}`} class="text-right" bind:value={waymark.x} />
-            </div>
-            <div class="flex-initial flex items-center gap-2 w-24">
-              <Label for={`edit-y-${i}`} class="mb-2">Y</Label>
-              <Input id={`edit-y-${i}`} class="text-right" bind:value={waymark.y} />
-            </div>
-            <div class="flex-initial flex items-center gap-2 w-24">
-              <Label for={`edit-z-${i}`} class="mb-2">Z</Label>
-              <Input id={`edit-z-${i}`} class="text-right" bind:value={waymark.z} />
-            </div>
+          <div class="preset-info flex items-center gap-6 mb-2">
+            <Label class="flex items-center">
+              <Checkbox bind:checked={waymark.active} />
+              <img src={`${MARKER_BASE_URL}/${WaymarkId[i]}.png`} width="64" height="64" alt="" />
+            </Label>
+            <Label class="flex items-center gap-2">
+              <P>X</P>
+              <NumberInput class="text-right" bind:value={waymark.x} />
+            </Label>
+            <Label class="flex items-center gap-2">
+              <P>Y</P>
+              <NumberInput class="text-right" bind:value={waymark.y} />
+            </Label>
+            <Label class="flex items-center gap-2">
+              <P>Z</P>
+              <NumberInput class="text-right" bind:value={waymark.z} />
+            </Label>
           </div>
         </form>
       {/each}
@@ -135,29 +131,9 @@
   </div>
 </div>
 
-<div style="--canvas-size:{canvasSize};" />
-
 <style>
-  .sidebar-container {
-    min-width: 280px;
-    max-width: 280px;
-    height: calc(max(var(--sidebar-height) * 1px, 100vh - 72px));
-    overflow-y: scroll;
-    overflow-x: hidden;
-  }
-
-  .main-container {
-    margin: 10px;
-    display: flex;
-    flex-wrap: nowrap;
-  }
-
-  .canvas-container {
-    width: calc(var(--canvas-size) * 1px);
-    margin-right: 20px;
-  }
-
-  .edit-form {
-    max-width: calc(var(--canvas-size) * 1px);
+  .edit-container {
+    min-width: calc((var(--canvas-size) - 25) * 1px);
+    max-width: calc((var(--canvas-size) - 25) * 1px);
   }
 </style>

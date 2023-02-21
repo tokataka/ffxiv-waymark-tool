@@ -1,17 +1,24 @@
 <script lang="ts">
-  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
+  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button } from 'flowbite-svelte';
 
   export let importOpen: boolean;
   export let exportOpen: boolean;
 </script>
 
-<Navbar let:hidden let:toggle color="purple">
+<Navbar
+  navClass="fixed w-full h-16 z-10 top-0 left-0 px-3 py-0"
+  navDivClass="mx-auto flex flex-wrap justify-between items-center h-16"
+  color="purple"
+>
   <NavBrand href="">
     <span class="whitespace-nowrap text-xl font-semibold dark:text-white">FFXIV Waymark Tool</span>
   </NavBrand>
-  <NavHamburger on:click={toggle} />
-  <NavUl {hidden}>
-    <NavLi href="javascript:void(0)" on:click={() => (importOpen = true)}>Import</NavLi>
-    <NavLi href="javascript:void(0)" on:click={() => (exportOpen = true)}>Export</NavLi>
+  <NavUl
+    hidden={false}
+    ulClass="flex bg-transparent p-0 items-center space-x-4 mt-0 text-sm font-medium h-16"
+    divClass="block w-auto h-16"
+  >
+    <NavLi href="" on:click={() => (importOpen = true)}><Button outline size='sm'>Import</Button></NavLi>
+    <NavLi href="" on:click={() => (exportOpen = true)}><Button outline size='sm'>Export</Button></NavLi>
   </NavUl>
 </Navbar>

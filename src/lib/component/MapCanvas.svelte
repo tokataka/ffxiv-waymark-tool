@@ -4,6 +4,7 @@
   import { MAP_BASE_URL, MARKER_BASE_URL } from '$lib/constants';
   import { mapData, mapImage } from '$lib/store';
   import axios from 'axios';
+    import { P } from 'flowbite-svelte';
 
   export let waymarkPreset: WaymarkPreset;
   export let subMapId: number;
@@ -27,6 +28,15 @@
   let zoom = 1;
   let panX = 0;
   let panY = 0;
+
+  let mouseX = -1;
+  let mouseY = -1;
+
+  let mouseMapX = 0;
+  let mouseMapY = 0;
+
+  let mouseMapAdjustedX = 0;
+  let mouseMapAdjustedY = 0;
 
   let isMouseDown = false;
 
@@ -68,45 +78,20 @@
         ctx?.drawImage(markerImages[i], x, z, markerSize, markerSize);
       }
     }
+
+    // 마우스 커서 십자라인
+    if (mouseX >= 0 && mouseY >= 0) {
+      ctx?.beginPath();
+      ctx?.moveTo(-width / 2 / zoom - panX, (mouseMapY * sizeFactor) / 100);
+      ctx?.lineTo(width / 2 / zoom - panX, (mouseMapY * sizeFactor) / 100);
+      ctx?.stroke();
+
+      ctx?.beginPath();
+      ctx?.moveTo((mouseMapX * sizeFactor) / 100, -height / 2 / zoom - panY);
+      ctx?.lineTo((mouseMapX * sizeFactor) / 100, height / 2 / zoom - panY);
+      ctx?.stroke();
+    }
   };
-
-  $: {
-    if (mapId === waymarkPreset.mapId) {
-      drawCanvas();
-    } else {
-      mapId = waymarkPreset.mapId;
-    }
-  }
-
-  $: {
-    if (mounted) {
-      try {
-        const mapFile = $mapData[mapId].mapFile;
-        const mapFileIndex = $mapData[mapId].subMaps[subMapId].mapFileIndex;
-        const mapFileKey = `${mapFile}.${mapFileIndex}`;
-
-        if (!(mapFileKey in $mapImage)) {
-          const mapFileUrl = `${MAP_BASE_URL}/${mapFileKey}.png`;
-
-          axios.get<Blob>(mapFileUrl, { responseType: 'blob' }).then((res) => {
-            createImageBitmap(res.data).then((image) => {
-              $mapImage[mapFileKey] = image;
-              currentMapImage = $mapImage[mapFileKey];
-
-              resetAndDrawCanvas();
-            });
-          });
-        } else {
-          currentMapImage = $mapImage[mapFileKey];
-
-          resetAndDrawCanvas();
-        }
-      } catch (error) {
-        // console.log(mapId);
-        // console.log(error);
-      }
-    }
-  }
 
   const resetAndDrawCanvas = () => {
     const { sizeFactor } = $mapData[mapId].subMaps[subMapId];
@@ -161,20 +146,87 @@
   };
 
   const mousemove = (ev: MouseEvent) => {
+    if (!(mapId in $mapData)) return;
+
+    const { offsetX, offsetY, sizeFactor } = $mapData[mapId].subMaps[subMapId];
+
+    mouseX = ev.offsetX;
+    mouseY = ev.offsetY;
+
+    mouseMapX = (((mouseX - width / 2) / zoom - panX) * 100) / sizeFactor;
+    mouseMapY = (((mouseY - height / 2) / zoom - panY) * 100) / sizeFactor;
+
+    mouseMapAdjustedX = mouseMapX - offsetX;
+    mouseMapAdjustedY = mouseMapY - offsetY;
+
     if (isMouseDown) {
       ctx?.translate(ev.movementX / zoom, ev.movementY / zoom);
       panX += ev.movementX / zoom;
       panY += ev.movementY / zoom;
-
-      drawCanvas();
     }
+
+    drawCanvas();
   };
+
+  const mouseleave = (ev: MouseEvent) => {
+    mouseX = -1;
+    mouseY = -1;
+
+    drawCanvas();
+  };
+
+  $: {
+    if (mapId === waymarkPreset.mapId) {
+      drawCanvas();
+    } else {
+      mapId = waymarkPreset.mapId;
+    }
+  }
+
+  $: {
+    if (mounted) {
+      try {
+        const mapFile = $mapData[mapId].mapFile;
+        const mapFileIndex = $mapData[mapId].subMaps[subMapId].mapFileIndex;
+        const mapFileKey = `${mapFile}.${mapFileIndex}`;
+
+        if (!(mapFileKey in $mapImage)) {
+          const mapFileUrl = `${MAP_BASE_URL}/${mapFileKey}.png`;
+
+          axios.get<Blob>(mapFileUrl, { responseType: 'blob' }).then((res) => {
+            createImageBitmap(res.data).then((image) => {
+              $mapImage[mapFileKey] = image;
+              currentMapImage = $mapImage[mapFileKey];
+
+              resetAndDrawCanvas();
+            });
+          });
+        } else {
+          currentMapImage = $mapImage[mapFileKey];
+
+          resetAndDrawCanvas();
+        }
+      } catch (error) {
+        // console.log(mapId);
+        // console.log(error);
+      }
+    }
+  }
 </script>
 
-<canvas
-  bind:this={canvas}
-  on:wheel|preventDefault={mousewheel}
-  on:mousedown={mousedown}
-  on:mouseup={mouseup}
-  on:mousemove={mousemove}
-/>
+<div class="relative">
+  {#if mouseX >= 0 && mouseY >= 0}
+    <div class="absolute z-40 w-max " style={`left: ${mouseX + 6}px; top: ${mouseY - 26}px`}>
+      <P>({mouseMapAdjustedX.toFixed(1)}, {mouseMapAdjustedY.toFixed(1)})</P>
+    </div>
+  {/if}
+
+  <canvas
+    bind:this={canvas}
+    on:wheel|preventDefault={mousewheel}
+    on:mousedown={mousedown}
+    on:mouseup={mouseup}
+    on:mousemove={mousemove}
+    on:mouseleave={mouseleave}
+  />
+</div>

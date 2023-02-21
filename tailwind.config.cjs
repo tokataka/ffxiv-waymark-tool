@@ -5,7 +5,10 @@ const config = {
   ],
 
   theme: {
-    extend: {}
+    extend: {},
+    container: {
+      screens: {}
+    }
   },
 
   plugins: [require('flowbite/plugin')],

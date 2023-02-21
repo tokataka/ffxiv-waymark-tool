@@ -111,12 +111,11 @@ export async function importDatFile(
 
 export function exportDatFile(
   fileData: IFileData,
-  waymarkPresets: WaymarkPreset[],
-  indexToExport: number[]
+  waymarkPresets: WaymarkPreset[]
 ) {
   const { header, xorData, waymarkStartOffset } = fileData;
 
-  for (const waymarkIndex of indexToExport) {
+  for (let waymarkIndex = 0; waymarkIndex < waymarkPresets.length; waymarkIndex++) {
     const waymarkPreset = waymarkPresets[waymarkIndex];
     let waymarkOffset = waymarkStartOffset + waymarkIndex * 104;
 

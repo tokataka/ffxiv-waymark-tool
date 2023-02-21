@@ -4,7 +4,7 @@ import type { IMapData } from '$lib/interface/IMapData';
 import { WaymarkPreset } from './model/WaymarkPreset';
 
 export const mapData: Writable<Record<number, IMapData>> = writable({
-  [-1]: {
+  [0]: {
     mapName: '--',
     mapFile: 'default',
     subMaps: [
