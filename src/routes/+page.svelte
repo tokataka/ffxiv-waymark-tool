@@ -8,7 +8,7 @@
   import ImportModal from '$lib/component/ImportModal.svelte';
   import ExportModal from '$lib/component/ExportModal.svelte';
   import Navbar from '$lib/component/Navbar.svelte';
-  import { WaymarkId, type WaymarkPreset } from '$lib/model/WaymarkPreset';
+  import { WaymarkId, WaymarkPreset, defaultWaymarkPresets } from '$lib/model/WaymarkPreset';
   import { NumberInput, Label, Checkbox, Radio, Select, P } from 'flowbite-svelte';
 
   let importOpen = false;
@@ -35,6 +35,13 @@
   // To persist waymarkPresets on change
   $: {
     $waymarkPresets = $waymarkPresets;
+    try {
+      if ($waymarkPresets.length !== 30) {
+        $waymarkPresets = defaultWaymarkPresets();
+      }
+    } catch {
+      $waymarkPresets = defaultWaymarkPresets();
+    }
   }
 
   onMount(async () => {
@@ -61,17 +68,11 @@
 <ExportModal bind:open={exportOpen} bind:waymarkPresets={$waymarkPresets} />
 
 <div class="container">
-  <Navbar
-    bind:importOpen
-    bind:exportOpen
-  />
+  <Navbar bind:importOpen bind:exportOpen />
 
-  <Sidebar
-    bind:waymarkPresets={$waymarkPresets}
-    bind:currentPresetId
-  />
+  <Sidebar bind:waymarkPresets={$waymarkPresets} bind:currentPresetId />
 
-  <div class="flex flex-wrap items-center !ml-72 mt-20 mr-4" style="--canvas-size:{canvasSize};" >
+  <div class="flex flex-wrap items-center !ml-72 mt-20 mr-4" style="--canvas-size:{canvasSize};">
     <div class="canvas-container ml-4">
       <Select
         class="mb-3"

@@ -50,4 +50,11 @@ export class WaymarkPreset {
   }
 }
 
-export const defaultWaymarkPreset = new WaymarkPreset();
+export function defaultWaymarkPresets(): WaymarkPreset[] {
+  const presets: WaymarkPreset[] = [];
+  for (let i = 0; i < 30; i++) {
+    presets.push(new WaymarkPreset());
+  }
+
+  return presets;
+}
