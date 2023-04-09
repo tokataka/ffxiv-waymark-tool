@@ -109,10 +109,7 @@ export async function importDatFile(
   };
 }
 
-export function exportDatFile(
-  fileData: IFileData,
-  waymarkPresets: WaymarkPreset[]
-) {
+export function exportDatFile(fileData: IFileData, waymarkPresets: WaymarkPreset[]) {
   const { header, xorData, waymarkStartOffset } = fileData;
 
   for (let waymarkIndex = 0; waymarkIndex < waymarkPresets.length; waymarkIndex++) {

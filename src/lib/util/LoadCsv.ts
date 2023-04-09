@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import { CSV_BASE_URL } from '$lib/constants';
+import { PUBLIC_CSV_BASE_URL } from '$env/static/public';
 import axios, { type AxiosResponse } from 'axios';
 import type { IMapData } from '$lib/interface/IMapData';
 
@@ -12,7 +12,7 @@ export default async function loadCsv() {
   let res: AxiosResponse<string, unknown>;
   let papaResult: Papa.ParseResult<string[]>;
 
-  res = await axios.get(`${CSV_BASE_URL}/PlaceName.csv`);
+  res = await axios.get(`${PUBLIC_CSV_BASE_URL}/PlaceName.csv`);
   papaResult = Papa.parse<string[]>(res.data);
   papaResult.data.forEach((value, index) => {
     if (index < 3) return;
@@ -24,7 +24,7 @@ export default async function loadCsv() {
     placeNameData[placeNameId] = placeName;
   });
 
-  res = await axios.get(`${CSV_BASE_URL}/Map.csv`);
+  res = await axios.get(`${PUBLIC_CSV_BASE_URL}/Map.csv`);
   papaResult = Papa.parse<string[]>(res.data);
   papaResult.data.forEach((value, index) => {
     if (index < 3) return;
@@ -54,7 +54,7 @@ export default async function loadCsv() {
     mapIdToTerritoryId[mapId] = territoryId;
   });
 
-  res = await axios.get(`${CSV_BASE_URL}/TerritoryType.csv`);
+  res = await axios.get(`${PUBLIC_CSV_BASE_URL}/TerritoryType.csv`);
   papaResult = Papa.parse<string[]>(res.data);
   papaResult.data.forEach((value, index) => {
     if (index < 3) return;
@@ -77,7 +77,7 @@ export default async function loadCsv() {
     }
   });
 
-  res = await axios.get(`${CSV_BASE_URL}/ContentFinderCondition.csv`);
+  res = await axios.get(`${PUBLIC_CSV_BASE_URL}/ContentFinderCondition.csv`);
   papaResult = Papa.parse<string[]>(res.data);
   papaResult.data.forEach((value, index) => {
     if (index < 3) return;

@@ -1,4 +1,4 @@
-import { writable, type Writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
 import { persisted } from 'svelte-local-storage-store';
 import type { IMapData } from '$lib/interface/IMapData';
 import { defaultWaymarkPresets } from './model/WaymarkPreset';
@@ -22,3 +22,11 @@ export const mapData: Writable<Record<number, IMapData>> = writable({
 export const mapImage: Writable<Record<string, ImageBitmap>> = writable({});
 
 export const waymarkPresets = persisted('waymarkPresets', defaultWaymarkPresets());
+
+try {
+  if (get(waymarkPresets).length !== 30) {
+    waymarkPresets.set(defaultWaymarkPresets());
+  }
+} catch {
+  waymarkPresets.set(defaultWaymarkPresets());
+}

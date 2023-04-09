@@ -150,10 +150,12 @@
     <div class="flex">
       <div class="w-2/5">
         {#each waymarkPresets as waymarkPreset, i}
-          <Label class="flex items-center gap-2">
-            <Checkbox bind:checked={jsonExportChecked[i]} />
-            <P>{i + 1}. {$mapData[waymarkPreset.mapId]?.mapName}</P>
-          </Label>
+          {#if waymarkPreset.mapId !== 0}
+            <Label class="flex items-center gap-2">
+              <Checkbox bind:checked={jsonExportChecked[i]} />
+              <P>{i + 1}. {$mapData[waymarkPreset.mapId]?.mapName}</P>
+            </Label>
+          {/if}
         {/each}
       </div>
       <div class="w-3/5">

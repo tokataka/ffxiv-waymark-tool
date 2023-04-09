@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Navbar, NavBrand, NavLi, NavUl, NavHamburger, Button } from 'flowbite-svelte';
+  import { Navbar, NavBrand, NavLi, NavUl, Button } from 'flowbite-svelte';
 
   export let importOpen: boolean;
   export let exportOpen: boolean;
@@ -18,7 +18,11 @@
     ulClass="flex bg-transparent p-0 items-center space-x-4 mt-0 text-sm font-medium h-16"
     divClass="block w-auto h-16"
   >
-    <NavLi href="" on:click={() => (importOpen = true)}><Button outline size='sm'>Import</Button></NavLi>
-    <NavLi href="" on:click={() => (exportOpen = true)}><Button outline size='sm'>Export</Button></NavLi>
+    <NavLi href="" on:click={() => (importOpen = true)}>
+      <Button outline size="sm">Import</Button>
+    </NavLi>
+    <NavLi href="" on:click={() => (exportOpen = true)}>
+      <Button outline size="sm">Export</Button>
+    </NavLi>
   </NavUl>
 </Navbar>

@@ -4,11 +4,11 @@
   import Sidebar from '$lib/component/Sidebar.svelte';
   import { mapData, waymarkPresets } from '$lib/store';
   import loadCsv from '$lib/util/LoadCsv';
-  import { MARKER_BASE_URL } from '$lib/constants';
+  import { PUBLIC_MARKER_BASE_URL } from '$env/static/public';
   import ImportModal from '$lib/component/ImportModal.svelte';
   import ExportModal from '$lib/component/ExportModal.svelte';
   import Navbar from '$lib/component/Navbar.svelte';
-  import { WaymarkId, WaymarkPreset, defaultWaymarkPresets } from '$lib/model/WaymarkPreset';
+  import { WaymarkId, WaymarkPreset } from '$lib/model/WaymarkPreset';
   import { NumberInput, Label, Checkbox, Radio, Select, P } from 'flowbite-svelte';
 
   let importOpen = false;
@@ -32,16 +32,9 @@
     }
   }
 
-  // To persist waymarkPresets on change
   $: {
+    // To persist waymarkPresets on change
     $waymarkPresets = $waymarkPresets;
-    try {
-      if ($waymarkPresets.length !== 30) {
-        $waymarkPresets = defaultWaymarkPresets();
-      }
-    } catch {
-      $waymarkPresets = defaultWaymarkPresets();
-    }
   }
 
   onMount(async () => {
@@ -63,6 +56,10 @@
     };
   });
 </script>
+
+<svelte:head>
+  <title>FFXIV Waymark Tool</title>
+</svelte:head>
 
 <ImportModal bind:open={importOpen} bind:waymarkPresets={$waymarkPresets} />
 <ExportModal bind:open={exportOpen} bind:waymarkPresets={$waymarkPresets} />
@@ -111,7 +108,12 @@
           <div class="preset-info flex items-center gap-6 mb-2">
             <Label class="flex items-center">
               <Checkbox bind:checked={waymark.active} />
-              <img src={`${MARKER_BASE_URL}/${WaymarkId[i]}.png`} width="64" height="64" alt="" />
+              <img
+                src={`${PUBLIC_MARKER_BASE_URL}/${WaymarkId[i]}.png`}
+                width="64"
+                height="64"
+                alt=""
+              />
             </Label>
             <Label class="flex items-center gap-2">
               <P>X</P>

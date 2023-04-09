@@ -71,29 +71,29 @@ export function exportJsonWaymark(waymarkPresets: WaymarkPreset[]): string {
   const jsonWaymarks: IJsonWaymark[] = [];
 
   for (const waymarkPreset of waymarkPresets) {
-    const jsonWaymarkMarkers: Record<string, IJsonWaymarkMarker> = {};
+    const jsonWaymarkMarkers: IJsonWaymarkMarker[] = [];
     for (let i = 0; i < 8; i++) {
       const waymark = waymarkPreset.waymarks[i];
-      jsonWaymarkMarkers[WaymarkId[i]] = {
+      jsonWaymarkMarkers.push({
         ID: i,
         X: waymark.x,
         Y: waymark.y,
         Z: waymark.z,
         Active: waymark.active
-      };
+      });
     }
 
     const jsonWaymark: IJsonWaymark = {
       Name: '',
       MapID: waymarkPreset.mapId,
-      A: jsonWaymarkMarkers['A'],
-      B: jsonWaymarkMarkers['B'],
-      C: jsonWaymarkMarkers['C'],
-      D: jsonWaymarkMarkers['D'],
-      One: jsonWaymarkMarkers['One'],
-      Two: jsonWaymarkMarkers['Two'],
-      Three: jsonWaymarkMarkers['Three'],
-      Four: jsonWaymarkMarkers['Four']
+      A: jsonWaymarkMarkers[0],
+      B: jsonWaymarkMarkers[1],
+      C: jsonWaymarkMarkers[2],
+      D: jsonWaymarkMarkers[3],
+      One: jsonWaymarkMarkers[4],
+      Two: jsonWaymarkMarkers[5],
+      Three: jsonWaymarkMarkers[6],
+      Four: jsonWaymarkMarkers[7]
     };
 
     jsonWaymarks.push(jsonWaymark);

@@ -1,10 +1,10 @@
 <script lang="ts">
   import { WaymarkId, type WaymarkPreset } from '$lib/model/WaymarkPreset';
   import { onMount } from 'svelte';
-  import { MAP_BASE_URL, MARKER_BASE_URL } from '$lib/constants';
+  import { PUBLIC_MAP_BASE_URL, PUBLIC_MARKER_BASE_URL } from '$env/static/public';
   import { mapData, mapImage } from '$lib/store';
   import axios from 'axios';
-    import { P } from 'flowbite-svelte';
+  import { P } from 'flowbite-svelte';
 
   export let waymarkPreset: WaymarkPreset;
   export let subMapId: number;
@@ -46,7 +46,7 @@
     ctx = canvas.getContext('2d');
 
     for (let i = 0; i < 8; i++) {
-      const markerUrl = `${MARKER_BASE_URL}/${WaymarkId[i]}.png`;
+      const markerUrl = `${PUBLIC_MARKER_BASE_URL}/${WaymarkId[i]}.png`;
       const res = await axios.get<Blob>(markerUrl, { responseType: 'blob' });
       markerImages.push(await createImageBitmap(res.data));
     }
@@ -168,7 +168,7 @@
     drawCanvas();
   };
 
-  const mouseleave = (ev: MouseEvent) => {
+  const mouseleave = () => {
     mouseX = -1;
     mouseY = -1;
 
@@ -191,7 +191,7 @@
         const mapFileKey = `${mapFile}.${mapFileIndex}`;
 
         if (!(mapFileKey in $mapImage)) {
-          const mapFileUrl = `${MAP_BASE_URL}/${mapFileKey}.png`;
+          const mapFileUrl = `${PUBLIC_MAP_BASE_URL}/${mapFileKey}.png`;
 
           axios.get<Blob>(mapFileUrl, { responseType: 'blob' }).then((res) => {
             createImageBitmap(res.data).then((image) => {
